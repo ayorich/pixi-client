@@ -1,0 +1,17 @@
+.container {
+  font-family: 'Rand';
+  font-style: normal;
+  font-weight: 500;
+  line-height: 140%;
+  text-align: center;
+  color: #161616;
+  font-size: 12px;
+}
+.paragraph {
+  margin: 0px;
+}
+.title {
+  color: #4f00c1;
+  font-size: 36px;
+  margin: 0px;
+}
