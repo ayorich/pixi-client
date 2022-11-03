@@ -10,6 +10,7 @@ const Input = ({
   style,
   className,
   placeHolder,
+  type,
 }: InputProps): ReactElement => {
   return (
     <input
@@ -19,6 +20,7 @@ const Input = ({
       onChange={onChange}
       className={`input ${className || ''}`}
       style={style}
+      type={type}
     />
   );
 };

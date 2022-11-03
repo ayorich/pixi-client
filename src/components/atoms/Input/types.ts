@@ -5,4 +5,5 @@ export type InputProps = {
   style?: React.CSSProperties | undefined;
   className?: string;
   placeHolder: string;
+  type: string;
 };

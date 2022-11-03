@@ -1,0 +1,18 @@
+.authPage {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+.authPage-content {
+  box-sizing: border-box;
+  width: 30%;
+}
+.form-inputs {
+  margin: 7px 0px;
+}
+@media screen and (max-width: 660px) {
+  .authPage-content {
+    width: 100%;
+  }
+}
