@@ -3,15 +3,15 @@ import React, { ReactElement } from 'react';
 import Button from '../../atoms/Button';
 import Input from '../../atoms/Input';
 import Text from '../../atoms/Text';
-import { signupInitialValues, signupValidationSchema } from './signUpSchema';
+import { signinInitialValues, signinValidationSchema } from './signInSchema';
+import logoSvg from '../../../assets/google.svg';
 import logo from '../../../assets/logo.svg';
-
-import { signupFormInputTypes } from './types';
+import { signInFormInputTypes } from './types';
 import './styles.css';
 
 export default function SignUpPage(): ReactElement {
-  const onFormSubmit = (values: signupFormInputTypes) => {
-    console.log('signupFormInputTypes', values);
+  const onFormSubmit = (values: signInFormInputTypes) => {
+    console.log('signInFormInputTypes', values);
   };
   return (
     <div className="authPage">
@@ -19,8 +19,8 @@ export default function SignUpPage(): ReactElement {
 
       <div className="authPage-content">
         <Formik
-          initialValues={signupInitialValues}
-          validationSchema={signupValidationSchema}
+          initialValues={signinInitialValues}
+          validationSchema={signinValidationSchema}
           validate={(values) => {
             const errors: any = {};
             if (!values.email) {
@@ -31,10 +31,6 @@ export default function SignUpPage(): ReactElement {
               errors.email = 'Invalid email address';
             }
 
-            if (values.password !== values.confirmPassword) {
-              errors.password = 'Password not same';
-              errors.confirmPassword = 'Password not same';
-            }
             return errors;
           }}
           onSubmit={onFormSubmit}
@@ -42,28 +38,11 @@ export default function SignUpPage(): ReactElement {
           {({ handleChange, handleSubmit, touched, errors, values }) => (
             <form onSubmit={handleSubmit}>
               <Text
-                text="Create a new account"
+                text="Log in to continue"
                 type="title"
                 className="authPage-title"
               />
-              <Input
-                name="firstName"
-                value={values.firstName}
-                placeHolder="Enter first name"
-                onChange={handleChange('firstName')}
-                className="form-inputs"
-                type="string"
-                isError={!!(touched.firstName && errors.firstName)}
-              />
-              <Input
-                name="lastName"
-                value={values.lastName}
-                placeHolder="Enter last name"
-                onChange={handleChange('lastName')}
-                className="form-inputs"
-                type="string"
-                isError={!!(touched.lastName && errors.lastName)}
-              />
+
               <Input
                 name="email"
                 value={values.email}
@@ -83,27 +62,29 @@ export default function SignUpPage(): ReactElement {
                 isError={!!(touched.password && errors.password)}
               />
 
-              <Input
-                name="confirmPassword"
-                value={values.confirmPassword}
-                placeHolder="Enter confrim password"
-                onChange={handleChange('confirmPassword')}
-                className="form-inputs"
-                type="password"
-                isError={!!(touched.confirmPassword && errors.confirmPassword)}
+              <Text
+                text="Forgot password?"
+                type="p"
+                className="authPage-forgotPwd"
               />
 
-              <Button
-                text="Create Account"
-                type="submit"
-                className="authPage-btn"
-              />
+              <Button text="Log in" type="submit" className="authPage-btn" />
             </form>
           )}
         </Formik>
         <div className="authPage-extra">
-          <Text text="Have an account?" type="span" />
-          <a href="/">Sign in</a>
+          <Text text="Don’t have an account?" type="span" />
+          <a href="/">Sign up</a>
+        </div>
+        <Text text="or" type="p" className="authPage-or" />
+
+        <div className="authPage-goggle">
+          <img src={logoSvg} alt="google" />
+          <Text
+            text="Log in with Google"
+            type="span"
+            className="authPage-goggleText"
+          />
         </div>
       </div>
     </div>

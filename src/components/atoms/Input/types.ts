@@ -6,4 +6,5 @@ export type InputProps = {
   className?: string;
   placeHolder: string;
   type: string;
+  isError?: boolean;
 };

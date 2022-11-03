@@ -11,6 +11,7 @@ const Input = ({
   className,
   placeHolder,
   type,
+  isError,
 }: InputProps): ReactElement => {
   return (
     <input
@@ -19,7 +20,7 @@ const Input = ({
       placeholder={placeHolder}
       onChange={onChange}
       className={`input ${className || ''}`}
-      style={style}
+      style={{ ...style, border: `1px solid ${isError ? 'red' : '#9f9f9f'}` }}
       type={type}
     />
   );
