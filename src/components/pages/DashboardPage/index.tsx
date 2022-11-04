@@ -31,6 +31,9 @@ export default function DashboardPage(): ReactElement {
   let annoRef = new Container();
   let container: HTMLElement;
 
+  const lineStore = useRef<any>({});
+  const currentLine = useRef<any>(null);
+
   const getMousePos = (event: any) => {
     const pos = { x: 0, y: 0 };
     if (container) {
@@ -63,11 +66,25 @@ export default function DashboardPage(): ReactElement {
     if (initPointer == null) return;
 
     sprite.clear();
-    sprite.lineStyle(2, 0xff0000, 1);
-    sprite.moveTo(initPointer.x, initPointer.y);
-
+    // sprite.lineStyle(2, 0xff0000, 1);
+    // sprite.moveTo(initPointer.x, initPointer.y);
     const mousePosRef = getMousePos(e);
-    sprite.lineTo(mousePosRef.x, mousePosRef.y);
+    // sprite.lineTo(mousePosRef.x, mousePosRef.y);
+
+    const { x, y } = mousePosRef;
+
+    Object.keys(lineStore.current).forEach((key: string) => {
+      sprite.lineStyle(2, 0xffd900, 1);
+      sprite.moveTo(initPointer.x, initPointer.y);
+      lineStore.current[key].forEach(({ x, y }: any) => {
+        sprite.lineTo(x, y);
+      });
+    });
+
+    lineStore.current[currentLine.current] = [
+      ...lineStore.current[currentLine.current],
+      { x, y },
+    ];
   };
 
   const onMouseDown = (e: any) => {
@@ -82,6 +99,11 @@ export default function DashboardPage(): ReactElement {
     annoRef.addChild(sprite);
 
     isMouseButtonDown = true;
+
+    //assign line name
+    const identifier = Math.random() * 200000;
+    currentLine.current = identifier;
+    lineStore.current[identifier] = [];
   };
 
   const onMouseUp = (e: any) => {
