@@ -24,15 +24,19 @@ const app = new Application({
 });
 
 export default function DashboardPage(): ReactElement {
-  var sprite = new Graphics();
-  let initPointer: any = null;
-
-  let isMouseButtonDown = false;
+  let sprite = new Graphics();
   let annoRef = new Container();
   let container: HTMLElement;
 
+  const isMouseButtonDown = useRef(false);
+  const initPointer = useRef<{ x: number; y: number }>({
+    x: 0,
+    y: 0,
+  });
   const lineStore = useRef<any>({});
   const currentLine = useRef<any>(null);
+
+  // let initPointer: any = null;
 
   const getMousePos = (event: any) => {
     const pos = { x: 0, y: 0 };
@@ -58,25 +62,20 @@ export default function DashboardPage(): ReactElement {
   }, []);
 
   const onMouseMove = (e: any) => {
-    if (!isMouseButtonDown) {
+    if (!isMouseButtonDown.current) {
       return;
     }
 
-    // clearSpriteRef(annoRef)
-    if (initPointer == null) return;
+    if (initPointer.current == null) return;
 
     const mousePosRef = getMousePos(e);
-    // sprite.clear();
-    // sprite.lineStyle(2, 0xff0000, 1);
-    // sprite.moveTo(initPointer.x, initPointer.y);
-    // sprite.lineTo(mousePosRef.x, mousePosRef.y);
 
     const { x, y } = mousePosRef;
 
     Object.keys(lineStore.current).forEach((key: string) => {
       sprite.clear();
       sprite.lineStyle(2, 0xffd900, 1);
-      sprite.moveTo(initPointer.x, initPointer.y);
+      sprite.moveTo(initPointer.current.x, initPointer.current.y);
       lineStore.current[key].forEach(({ x, y }: any) => {
         sprite.lineTo(x, y);
       });
@@ -90,16 +89,16 @@ export default function DashboardPage(): ReactElement {
 
   const onMouseDown = (e: any) => {
     const mousePosRef = getMousePos(e);
-    initPointer = mousePosRef;
+    initPointer.current = mousePosRef;
 
     sprite = new Graphics();
     sprite.lineStyle(2, 0xff0000, 1);
-    sprite.moveTo(initPointer.x, initPointer.y);
+    sprite.moveTo(initPointer.current.x, initPointer.current.y);
     sprite.lineTo(mousePosRef.x, mousePosRef.y);
 
     annoRef.addChild(sprite);
 
-    isMouseButtonDown = true;
+    isMouseButtonDown.current = true;
 
     //assign line name
     const identifier = Math.random() * 200000;
@@ -108,7 +107,7 @@ export default function DashboardPage(): ReactElement {
   };
 
   const onMouseUp = (e: any) => {
-    isMouseButtonDown = false;
+    isMouseButtonDown.current = false;
   };
 
   return (
