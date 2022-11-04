@@ -1,15 +1,28 @@
-import React, { ReactElement, useEffect, useRef, useState } from 'react';
+import React, {
+  ReactElement,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import Button from '../../atoms/Button';
 import Text from '../../atoms/Text';
 import logo from '../../../assets/logo.svg';
 import avatar from '../../../assets/avatar.png';
-import { Stage, Sprite, Graphics } from '@inlet/react-pixi';
+import { Stage, Sprite, Graphics, useApp, Container } from '@inlet/react-pixi';
 import './styles.css';
+import { Application } from 'pixi.js';
 
-interface Draggable extends PIXI.DisplayObject {
-  data: PIXI.InteractionData | null;
-  dragging: boolean;
+interface Map {
+  [key: string]: string;
 }
+
+const app = new Application({
+  width: 200,
+  height: 50,
+  backgroundColor: 0x10bb99,
+  view: document.getElementById('canvas') as HTMLCanvasElement,
+});
 
 export const useMouseMove = () => {
   function getCoords(clientX: any, clientY: any) {
@@ -36,66 +49,102 @@ export const useMouseMove = () => {
 export default function DashboardPage(): ReactElement {
   const drawRef = useRef(null);
   const initPointer = useRef(null);
+  const lineStore = useRef<any>({});
+  const currentLine = useRef<any>(null);
   const isMouseButtonDown = useRef(false);
-
+  const [newD, setDraw] = useState<any>(null);
   const coords = useMouseMove();
+  const [app, setApp] = React.useState<Application>();
 
   const onMouseStart = (event: PIXI.InteractionEvent) => {
-    const sprite = event.currentTarget as any;
+    const sprite = event.currentTarget as PIXI.Graphics;
 
     //set initial point
     initPointer.current = coords?.current;
 
+    //assign line name
+    const identifier = Math.random() * 200000;
+    currentLine.current = identifier;
+    lineStore.current[identifier] = [];
     //set button is clicked
     isMouseButtonDown.current = true;
   };
 
   const onMouseEnd = (event: PIXI.InteractionEvent) => {
-    const sprite = event.currentTarget as Draggable;
+    const sprite = event.currentTarget as PIXI.Graphics;
     //set button is clicked
     isMouseButtonDown.current = false;
+
+    currentLine.current = null;
+    // setDraw(lineStore.current);
+
+    console.log('===============>end');
   };
 
   const onMouseMove = (event: PIXI.InteractionEvent) => {
-    // if (!isMouseButtonDown.current) {
-    //   return;
-    // }
+    if (!isMouseButtonDown.current) {
+      return;
+    }
 
     if (initPointer.current == null) return;
-    // // console.log('onMouseMove', coords, isMouseButtonDown.current);
 
-    const sprite = event.currentTarget as any;
+    let sprite = event.currentTarget as PIXI.Graphics;
 
     const { x, y } = coords?.current;
-    console.log('initPointer?.current', initPointer?.current);
     const { x: initX, y: initY } = initPointer?.current as any;
-    sprite.clear();
-    sprite.beginFill(0xff3300);
-    sprite.lineStyle(4, 0xffd900, 1);
-    sprite.moveTo(initX, initY);
-    sprite.lineTo(x, y);
+
+    Object.keys(lineStore.current).forEach((key: string) => {
+      sprite.lineStyle(2, 0xffd900, 1);
+      sprite.moveTo(initX, initY);
+      lineStore.current[key].forEach(({ x, y }: any) => {
+        sprite.lineTo(x, y);
+      });
+    });
+
+    lineStore.current[currentLine.current] = [
+      ...lineStore.current[currentLine.current],
+      { x, y },
+    ];
+
+    if (app) {
+      app?.renderer.render(app?.stage);
+      // sprite.destroy();
+    }
   };
-  const draw = React.useCallback((g: any) => {
-    // g.clear();
-    g.beginFill(0xff3300);
-    g.lineStyle(4, 0xffd900, 1);
-    g.moveTo(50, 50);
-    g.lineTo(250, 50);
-    g.lineTo(10, 340);
-    g.lineTo(50, 50);
-    // g.endFill();
-    // g.lineStyle(2, 0x0000ff, 1);
-    // g.beginFill(0xff700b, 1);
-    // g.drawRect(50, 150, 120, 120);
-    // g.lineStyle(2, 0xff00ff, 1);
-    // g.beginFill(0xff00bb, 0.25);
-    // g.drawRoundedRect(150, 100, 300, 100, 15);
-    // g.endFill();
-    // g.lineStyle(0);
-    // g.beginFill(0xffff0b, 0.5);
-    // g.drawCircle(470, 90, 60);
-    // g.endFill();
-  }, []);
+
+  console.log('===============>called------', initPointer?.current);
+
+  const draw = (sprite: any) => {
+    sprite.clear();
+    sprite.beginFill(0xffffff, 1);
+    sprite.drawRect(0, 0, 1500, 1200);
+    sprite.endFill();
+    console.log('===============>');
+
+    if (!!initPointer?.current) {
+      const { x: initX, y: initY } = initPointer?.current as any;
+      Object.keys(lineStore.current).forEach((key: string) => {
+        sprite.lineStyle(2, 0xffd900, 1);
+        sprite.moveTo(initX, initY);
+        lineStore.current[key].forEach(({ x, y }: any) => {
+          sprite.lineTo(x, y);
+        });
+      });
+    }
+
+    // sprite.lineStyle(4, 0xffd900, 1);
+    sprite.moveTo(50, 50);
+    sprite.lineTo(250, 50);
+    // sprite.lineTo(100, 100);
+    // sprite.lineTo(50, 50);
+
+    // sprite.lineStyle(4, 0xffd900, 1);
+    sprite.moveTo(250, 250);
+    sprite.lineTo(350, 250);
+    // sprite.lineTo(400, 400);
+    // sprite.lineTo(250, 250);
+  };
+
   return (
     <div className="dashboard">
       <div className="dashboard-header">
@@ -109,12 +158,14 @@ export default function DashboardPage(): ReactElement {
       <div className="dashboard-content" ref={drawRef}>
         <Stage
           width={600}
-          height={300}
+          height={600}
           options={{ backgroundColor: 0xffffff }}
-          //   onMouseMove={handleMouseMove}
+          // raf={false}
+          // renderOnComponentChange
+          // onMount={setApp}
         >
           <Graphics
-            draw={draw}
+            draw={(e) => draw(e)}
             interactive
             buttonMode
             pointerdown={onMouseStart}
@@ -123,23 +174,10 @@ export default function DashboardPage(): ReactElement {
             pointermove={onMouseMove}
             // mousemove={onMouseMove}
             // mousedown={onMouseStart}
+            // x={0}
+            // y={56}
           />
         </Stage>
-
-        {/* <Stage width={200} height={200} options={{ backgroundColor: 0x1099bb }}>
-          <Sprite
-            image={avatar}
-            x={100}
-            y={100}
-            anchor={0.5}
-            interactive
-            buttonMode
-            pointerdown={onMouseStart}
-            pointerup={onMouseEnd}
-            pointerupoutside={onMouseEnd}
-            pointermove={onMouseMove}
-          />
-        </Stage> */}
       </div>
     </div>
   );
