@@ -11,6 +11,8 @@ import logo from '../../../assets/logo.svg';
 import avatar from '../../../assets/avatar.png';
 import Canvas from '../../organisms/Canvas';
 import './styles.css';
+import SketchesAccordion from '../../organisms/SketchesAccordion';
+import UserAccordion from '../../organisms/UserAccordion';
 
 export default function DashboardPage(): ReactElement {
   return (
@@ -25,6 +27,10 @@ export default function DashboardPage(): ReactElement {
 
       <div className="dashboard-content">
         <Canvas />
+        <div className="dashboard-accordion">
+          <SketchesAccordion />
+          <UserAccordion />
+        </div>
       </div>
     </div>
   );

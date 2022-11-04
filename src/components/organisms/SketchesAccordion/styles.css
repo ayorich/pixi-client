@@ -1,0 +1,21 @@
+.sketchesList {
+  padding: 15px;
+}
+
+.sketchesList p {
+  text-align: left;
+  margin-bottom: 16px;
+  font-family: 'Rand';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 16px;
+  color: #161616;
+}
+
+.addSketch {
+  cursor: pointer;
+}
+.addSketch img {
+  margin-right: 10px;
+}

@@ -28,4 +28,11 @@
   justify-content: center;
   align-items: center;
   height: calc(100vh - 59px);
+  position: relative;
+}
+.dashboard-accordion {
+  position: absolute;
+  right: 20px;
+  top: 20px;
+  z-index: 10;
 }

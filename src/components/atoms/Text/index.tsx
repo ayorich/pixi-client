@@ -14,21 +14,21 @@ const Text = ({
     <>
       {type === 'p' ? (
         <p
-          className={`container paragraph ${className || ''}`}
+          className={`textWrapper paragraph ${className || ''}`}
           style={{ ...style, color: color }}
         >
           {text}
         </p>
       ) : type === 'title' ? (
         <h1
-          className={`container title ${className || ''}`}
+          className={`textWrapper title ${className || ''}`}
           style={{ ...style, color: color }}
         >
           {text}
         </h1>
       ) : (
         <span
-          className={`container ${className || ''}`}
+          className={`textWrapper ${className || ''}`}
           style={{ ...style, color: color }}
         >
           {text}
