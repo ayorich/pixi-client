@@ -9,25 +9,20 @@ import Button from '../../atoms/Button';
 import Text from '../../atoms/Text';
 import logo from '../../../assets/logo.svg';
 import avatar from '../../../assets/avatar.png';
-import './styles.css';
 import { Application, Container, Graphics } from 'pixi.js';
-
-interface Map {
-  [key: string]: string;
-}
+import './styles.css';
 
 const app = new Application({
   width: 900,
   height: 990,
-  backgroundColor: 0x10bb99,
-  // view: document.getElementById('canvas') as HTMLCanvasElement,
+  backgroundColor: 0xffffff,
 });
 
 export default function DashboardPage(): ReactElement {
   let sprite = new Graphics();
   let annoRef = new Container();
-  let container: HTMLElement;
-
+  const canvas = useRef<HTMLElement>();
+  let container = canvas.current;
   const isMouseButtonDown = useRef(false);
   const initPointer = useRef<{ x: number; y: number }>({
     x: 0,
@@ -35,8 +30,6 @@ export default function DashboardPage(): ReactElement {
   });
   const lineStore = useRef<any>({});
   const currentLine = useRef<any>(null);
-
-  // let initPointer: any = null;
 
   const getMousePos = (event: any) => {
     const pos = { x: 0, y: 0 };
@@ -121,10 +114,7 @@ export default function DashboardPage(): ReactElement {
       </div>
 
       <div className="dashboard-content">
-        <div
-          id="stage-container"
-          style={{ border: '1px solid red', display: 'table' }}
-        ></div>
+        <div id="stage-container" style={{ display: 'table' }}></div>
       </div>
     </div>
   );
