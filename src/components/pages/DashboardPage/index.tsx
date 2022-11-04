@@ -9,140 +9,83 @@ import Button from '../../atoms/Button';
 import Text from '../../atoms/Text';
 import logo from '../../../assets/logo.svg';
 import avatar from '../../../assets/avatar.png';
-import { Stage, Sprite, Graphics, useApp, Container } from '@inlet/react-pixi';
 import './styles.css';
-import { Application } from 'pixi.js';
+import { Application, Container, Graphics } from 'pixi.js';
 
 interface Map {
   [key: string]: string;
 }
 
 const app = new Application({
-  width: 200,
-  height: 50,
+  width: 900,
+  height: 990,
   backgroundColor: 0x10bb99,
-  view: document.getElementById('canvas') as HTMLCanvasElement,
+  // view: document.getElementById('canvas') as HTMLCanvasElement,
 });
 
-export const useMouseMove = () => {
-  function getCoords(clientX: any, clientY: any) {
-    return {
-      x: clientX || 0,
-      y: clientY || 0,
-    };
-  }
+export default function DashboardPage(): ReactElement {
+  var sprite = new Graphics();
+  let initPointer: any = null;
 
-  const coords: any = useRef(getCoords); // ref not state!
+  let isMouseButtonDown = false;
+  let annoRef = new Container();
+  let container: HTMLElement;
+
+  const getMousePos = (event: any) => {
+    const pos = { x: 0, y: 0 };
+    if (container) {
+      // Get the position and size of the component on the page.
+      const holderOffset = container.getBoundingClientRect();
+      pos.x = event.pageX - holderOffset.x;
+      pos.y = event.pageY - holderOffset.y;
+    }
+    return pos;
+  };
 
   useEffect(() => {
-    function handleMove(e: any) {
-      coords.current = getCoords(e.clientX, e.clientY);
-    }
-    global.addEventListener('mousemove', handleMove);
-    return () => {
-      global.removeEventListener('mousemove', handleMove);
-    };
-  });
-  return coords;
-};
+    app.stage.addChild(annoRef);
+    container = document.getElementById('stage-container') as HTMLElement;
+    container.appendChild(app.view);
 
-export default function DashboardPage(): ReactElement {
-  const drawRef = useRef(null);
-  const initPointer = useRef(null);
-  const lineStore = useRef<any>({});
-  const currentLine = useRef<any>(null);
-  const isMouseButtonDown = useRef(false);
-  const [newD, setDraw] = useState<any>(null);
-  const coords = useMouseMove();
-  const [app, setApp] = React.useState<Application>();
+    container.addEventListener('mousemove', onMouseMove);
 
-  const onMouseStart = (event: PIXI.InteractionEvent) => {
-    const sprite = event.currentTarget as PIXI.Graphics;
+    container.addEventListener('mousedown', onMouseDown);
 
-    //set initial point
-    initPointer.current = coords?.current;
+    container.addEventListener('mouseup', onMouseUp);
+  }, []);
 
-    //assign line name
-    const identifier = Math.random() * 200000;
-    currentLine.current = identifier;
-    lineStore.current[identifier] = [];
-    //set button is clicked
-    isMouseButtonDown.current = true;
-  };
-
-  const onMouseEnd = (event: PIXI.InteractionEvent) => {
-    const sprite = event.currentTarget as PIXI.Graphics;
-    //set button is clicked
-    isMouseButtonDown.current = false;
-
-    currentLine.current = null;
-    // setDraw(lineStore.current);
-
-    console.log('===============>end');
-  };
-
-  const onMouseMove = (event: PIXI.InteractionEvent) => {
-    if (!isMouseButtonDown.current) {
+  const onMouseMove = (e: any) => {
+    if (!isMouseButtonDown) {
       return;
     }
 
-    if (initPointer.current == null) return;
+    // clearSpriteRef(annoRef)
+    if (initPointer == null) return;
 
-    let sprite = event.currentTarget as PIXI.Graphics;
+    sprite.clear();
+    sprite.lineStyle(2, 0xff0000, 1);
+    sprite.moveTo(initPointer.x, initPointer.y);
 
-    const { x, y } = coords?.current;
-    const { x: initX, y: initY } = initPointer?.current as any;
-
-    Object.keys(lineStore.current).forEach((key: string) => {
-      sprite.lineStyle(2, 0xffd900, 1);
-      sprite.moveTo(initX, initY);
-      lineStore.current[key].forEach(({ x, y }: any) => {
-        sprite.lineTo(x, y);
-      });
-    });
-
-    lineStore.current[currentLine.current] = [
-      ...lineStore.current[currentLine.current],
-      { x, y },
-    ];
-
-    if (app) {
-      app?.renderer.render(app?.stage);
-      // sprite.destroy();
-    }
+    const mousePosRef = getMousePos(e);
+    sprite.lineTo(mousePosRef.x, mousePosRef.y);
   };
 
-  console.log('===============>called------', initPointer?.current);
+  const onMouseDown = (e: any) => {
+    const mousePosRef = getMousePos(e);
+    initPointer = mousePosRef;
 
-  const draw = (sprite: any) => {
-    sprite.clear();
-    sprite.beginFill(0xffffff, 1);
-    sprite.drawRect(0, 0, 1500, 1200);
-    sprite.endFill();
-    console.log('===============>');
+    sprite = new Graphics();
+    sprite.lineStyle(2, 0xff0000, 1);
+    sprite.moveTo(initPointer.x, initPointer.y);
+    sprite.lineTo(mousePosRef.x, mousePosRef.y);
 
-    if (!!initPointer?.current) {
-      const { x: initX, y: initY } = initPointer?.current as any;
-      Object.keys(lineStore.current).forEach((key: string) => {
-        sprite.lineStyle(2, 0xffd900, 1);
-        sprite.moveTo(initX, initY);
-        lineStore.current[key].forEach(({ x, y }: any) => {
-          sprite.lineTo(x, y);
-        });
-      });
-    }
+    annoRef.addChild(sprite);
 
-    // sprite.lineStyle(4, 0xffd900, 1);
-    sprite.moveTo(50, 50);
-    sprite.lineTo(250, 50);
-    // sprite.lineTo(100, 100);
-    // sprite.lineTo(50, 50);
+    isMouseButtonDown = true;
+  };
 
-    // sprite.lineStyle(4, 0xffd900, 1);
-    sprite.moveTo(250, 250);
-    sprite.lineTo(350, 250);
-    // sprite.lineTo(400, 400);
-    // sprite.lineTo(250, 250);
+  const onMouseUp = (e: any) => {
+    isMouseButtonDown = false;
   };
 
   return (
@@ -155,29 +98,11 @@ export default function DashboardPage(): ReactElement {
         </div>
       </div>
 
-      <div className="dashboard-content" ref={drawRef}>
-        <Stage
-          width={600}
-          height={600}
-          options={{ backgroundColor: 0xffffff }}
-          // raf={false}
-          // renderOnComponentChange
-          // onMount={setApp}
-        >
-          <Graphics
-            draw={(e) => draw(e)}
-            interactive
-            buttonMode
-            pointerdown={onMouseStart}
-            pointerup={onMouseEnd}
-            pointerupoutside={onMouseEnd}
-            pointermove={onMouseMove}
-            // mousemove={onMouseMove}
-            // mousedown={onMouseStart}
-            // x={0}
-            // y={56}
-          />
-        </Stage>
+      <div className="dashboard-content">
+        <div
+          id="stage-container"
+          style={{ border: '1px solid red', display: 'table' }}
+        ></div>
       </div>
     </div>
   );
