@@ -65,15 +65,16 @@ export default function DashboardPage(): ReactElement {
     // clearSpriteRef(annoRef)
     if (initPointer == null) return;
 
-    sprite.clear();
+    const mousePosRef = getMousePos(e);
+    // sprite.clear();
     // sprite.lineStyle(2, 0xff0000, 1);
     // sprite.moveTo(initPointer.x, initPointer.y);
-    const mousePosRef = getMousePos(e);
     // sprite.lineTo(mousePosRef.x, mousePosRef.y);
 
     const { x, y } = mousePosRef;
 
     Object.keys(lineStore.current).forEach((key: string) => {
+      sprite.clear();
       sprite.lineStyle(2, 0xffd900, 1);
       sprite.moveTo(initPointer.x, initPointer.y);
       lineStore.current[key].forEach(({ x, y }: any) => {
