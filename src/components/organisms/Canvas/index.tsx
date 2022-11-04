@@ -3,7 +3,7 @@ import { Application, Container, Graphics } from 'pixi.js';
 
 const app = new Application({
   width: 900,
-  height: 990,
+  height: 450,
   backgroundColor: 0xffffff,
 });
 
