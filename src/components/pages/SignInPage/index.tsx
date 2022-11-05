@@ -8,6 +8,8 @@ import logoSvg from '../../../assets/google.svg';
 import logo from '../../../assets/logo.svg';
 import { signInFormInputTypes } from './types';
 import './styles.css';
+import { Link } from 'react-router-dom';
+import { SIGNUP } from '../../../utils/routes';
 
 export default function SignUpPage(): ReactElement {
   const onFormSubmit = (values: signInFormInputTypes) => {
@@ -74,7 +76,7 @@ export default function SignUpPage(): ReactElement {
         </Formik>
         <div className="authPage-extra">
           <Text text="Don’t have an account?" type="span" />
-          <a href="/">Sign up</a>
+          <Link to={SIGNUP}>Sign up</Link>
         </div>
         <Text text="or" type="p" className="authPage-or" />
 
