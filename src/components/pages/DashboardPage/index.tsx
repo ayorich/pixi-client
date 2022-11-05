@@ -14,6 +14,7 @@ import './styles.css';
 import SketchesAccordion from '../../organisms/SketchesAccordion';
 import UserAccordion from '../../organisms/UserAccordion';
 import { useAuthContext } from '../../../context/Auth';
+import SketchProvider from '../../../context/Sketches';
 
 export default function DashboardPage(): ReactElement {
   const { user } = useAuthContext();
@@ -28,13 +29,15 @@ export default function DashboardPage(): ReactElement {
         </div>
       </div>
 
-      <div className="dashboard-content">
-        <Canvas />
-        <div className="dashboard-accordion">
-          <SketchesAccordion />
-          <UserAccordion />
+      <SketchProvider>
+        <div className="dashboard-content">
+          <Canvas />
+          <div className="dashboard-accordion">
+            <SketchesAccordion />
+            <UserAccordion />
+          </div>
         </div>
-      </div>
+      </SketchProvider>
     </div>
   );
 }

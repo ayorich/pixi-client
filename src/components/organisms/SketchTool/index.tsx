@@ -32,7 +32,6 @@ const SketchTool = ({ sketch }: { sketch: any }): ReactElement => {
         sketch,
         user: [user._id],
       });
-      console.log('sketch', data);
       setLoading(false);
       setSketchName('');
     } catch (err) {

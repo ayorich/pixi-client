@@ -19,3 +19,7 @@
 .addSketch img {
   margin-right: 10px;
 }
+
+.sketched {
+  cursor: pointer;
+}

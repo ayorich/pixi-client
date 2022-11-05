@@ -4,4 +4,5 @@ export type TextProps = {
   className?: string;
   type?: 'p' | 'span' | 'title';
   color?: string;
+  onClick?: () => void;
 };

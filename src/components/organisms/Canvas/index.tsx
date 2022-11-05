@@ -2,6 +2,7 @@ import React, { ReactElement, useEffect, useRef } from 'react';
 import { Application, Container, Graphics } from 'pixi.js';
 import SketchTool from '../SketchTool';
 import { v4 as uuidv4 } from 'uuid';
+import { useSketchContext } from '../../../context/Sketches';
 
 const app = new Application({
   width: 900,
@@ -10,6 +11,8 @@ const app = new Application({
 });
 
 export default function Canvas(): ReactElement {
+  const { activeSketch } = useSketchContext();
+
   let sprite = new Graphics();
   let annoRef = new Container();
 
@@ -22,6 +25,13 @@ export default function Canvas(): ReactElement {
   });
   const lineStore = useRef<any>({});
   const currentLine = useRef<any>(null);
+
+  useEffect(() => {
+    if (activeSketch) {
+      console.log(activeSketch);
+      lineStore.current = activeSketch;
+    }
+  }, [activeSketch]);
 
   const getMousePos = (event: any) => {
     const pos = { x: 0, y: 0 };

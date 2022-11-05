@@ -3,38 +3,25 @@ import React, { ReactElement } from 'react';
 import AccordionTile from '../../molecules/AccordionTile';
 import Text from '../../atoms/Text';
 import './styles.css';
+import { useSketchContext } from '../../../context/Sketches';
 
 const UserAccordion = (): ReactElement => {
+  const { colloborators } = useSketchContext();
+
   return (
     <AccordionTile title="USERS">
       <div className="userList">
-        <div className="userItems">
-          <div
-            className="userItemColor"
-            style={{
-              backgroundColor: 'red',
-            }}
-          ></div>
-          <Text type="p" text={'Collaborator 1'} />
-        </div>
-        <div className="userItems">
-          <div
-            className="userItemColor"
-            style={{
-              backgroundColor: 'red',
-            }}
-          ></div>
-          <Text type="p" text={'Collaborator 1'} />
-        </div>
-        <div className="userItems">
-          <div
-            className="userItemColor"
-            style={{
-              backgroundColor: 'red',
-            }}
-          ></div>
-          <Text type="p" text={'Collaborator 1'} />
-        </div>
+        {colloborators.map(({ firstName, lastName, color }, i) => (
+          <div className="userItems" key={i}>
+            <div
+              className="userItemColor"
+              style={{
+                backgroundColor: color,
+              }}
+            ></div>
+            <Text type="p" text={`${firstName} ${lastName}`} />
+          </div>
+        ))}
       </div>
     </AccordionTile>
   );
