@@ -1,5 +1,5 @@
-import { Formik } from 'formik';
-import React, { ReactElement } from 'react';
+import { Formik, FormikHelpers } from 'formik';
+import React, { ReactElement, useState } from 'react';
 import Button from '../../atoms/Button';
 import Input from '../../atoms/Input';
 import Text from '../../atoms/Text';
@@ -15,14 +15,28 @@ import apiService from '../../../utils/apiServices';
 
 export default function SignUpPage(): ReactElement {
   const { setUser } = useAuthContext();
+  const [loading, setLoading] = useState(false);
+  const onFormSubmit = async (
+    values: signInFormInputTypes,
+    { setErrors }: FormikHelpers<signInFormInputTypes>
+  ) => {
+    setLoading(true);
+    try {
+      const data: any = await apiService('/auth/login', 'POST', values);
 
-  const onFormSubmit = async (values: signInFormInputTypes) => {
-    const data: any = await apiService('/auth/login', 'POST', values);
+      const user = data?.data?.data?.user;
 
-    const user = data?.data?.data?.user;
+      sessionStorage.setItem('naya_user', JSON.stringify(user));
+      setUser(user);
 
-    sessionStorage.setItem('naya_user', JSON.stringify(user));
-    setUser(user);
+      setLoading(false);
+    } catch (err) {
+      setErrors({
+        password: 'Invalid email address',
+        email: 'Invalid email address',
+      });
+      setLoading(false);
+    }
   };
   return (
     <div className="authPage">
@@ -79,7 +93,12 @@ export default function SignUpPage(): ReactElement {
                 className="authPage-forgotPwd"
               />
 
-              <Button text="Log in" type="submit" className="authPage-btn" />
+              <Button
+                text="Log in"
+                type="submit"
+                className="authPage-btn"
+                loading={loading}
+              />
             </form>
           )}
         </Formik>

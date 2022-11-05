@@ -1,5 +1,5 @@
-import { Formik } from 'formik';
-import React, { ReactElement } from 'react';
+import { Formik, FormikHelpers } from 'formik';
+import React, { ReactElement, useState } from 'react';
 import Button from '../../atoms/Button';
 import Input from '../../atoms/Input';
 import Text from '../../atoms/Text';
@@ -15,8 +15,13 @@ import { useAuthContext } from '../../../context/Auth';
 
 export default function SignUpPage(): ReactElement {
   const { setUser } = useAuthContext();
+  const [loading, setLoading] = useState(false);
 
-  const onFormSubmit = async (values: signupFormInputTypes) => {
+  const onFormSubmit = async (
+    values: signupFormInputTypes,
+    { setErrors }: FormikHelpers<signupFormInputTypes>
+  ) => {
+    setLoading(true);
     try {
       const data: any = await apiService('/auth/signup', 'POST', values);
 
@@ -24,8 +29,16 @@ export default function SignUpPage(): ReactElement {
 
       sessionStorage.setItem('naya_user', JSON.stringify(user));
       setUser(user);
+      setLoading(false);
     } catch (err) {
-      console.error(err);
+      setLoading(false);
+      setErrors({
+        email: 'required',
+        firstName: 'required',
+        lastName: 'required',
+        password: 'required',
+        confirmPassword: 'required',
+      });
     }
   };
   return (
@@ -112,6 +125,7 @@ export default function SignUpPage(): ReactElement {
                 text="Create Account"
                 type="submit"
                 className="authPage-btn"
+                loading={loading}
               />
             </form>
           )}

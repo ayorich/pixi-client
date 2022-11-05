@@ -8,10 +8,16 @@ const Button = ({
   style,
   className,
   type = 'button',
+  loading,
 }: ButtonProps): ReactElement => {
   return (
-    <button className={`button ${className || ''}`} style={style} type={type}>
-      {text}
+    <button
+      className={`button ${className || ''}`}
+      style={style}
+      type={type}
+      disabled={loading}
+    >
+      {loading ? 'Loading...' : text}
     </button>
   );
 };

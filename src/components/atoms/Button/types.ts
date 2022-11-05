@@ -3,4 +3,5 @@ export type ButtonProps = {
   text: string;
   className?: string;
   type?: 'button' | 'submit' | 'reset';
+  loading?: boolean;
 };

@@ -91,6 +91,7 @@ export default function Canvas(): ReactElement {
 
   const onMouseUp = (e: any) => {
     isMouseButtonDown.current = false;
+    console.log('sketch', lineStore.current);
   };
 
   return (
