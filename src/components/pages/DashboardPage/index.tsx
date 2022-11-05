@@ -13,14 +13,17 @@ import Canvas from '../../organisms/Canvas';
 import './styles.css';
 import SketchesAccordion from '../../organisms/SketchesAccordion';
 import UserAccordion from '../../organisms/UserAccordion';
+import { useAuthContext } from '../../../context/Auth';
 
 export default function DashboardPage(): ReactElement {
+  const { user } = useAuthContext();
+
   return (
     <div className="dashboard">
       <div className="dashboard-header">
         <img src={logo} alt="logo" className="dashboard-logo" />
         <div className="dashboard-profile">
-          <Text type="span" text="John Doe" />
+          <Text type="span" text={`${user.firstName} ${user.lastName}`} />
           <img src={avatar} alt="avatar" className="dashboard-profile-img" />
         </div>
       </div>

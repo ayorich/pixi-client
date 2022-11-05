@@ -10,10 +10,23 @@ import { signupFormInputTypes } from './types';
 import './styles.css';
 import { Link } from 'react-router-dom';
 import { LOGIN } from '../../../utils/routes';
+import apiService from '../../../utils/apiServices';
+import { useAuthContext } from '../../../context/Auth';
 
 export default function SignUpPage(): ReactElement {
-  const onFormSubmit = (values: signupFormInputTypes) => {
-    console.log('signupFormInputTypes', values);
+  const { setUser } = useAuthContext();
+
+  const onFormSubmit = async (values: signupFormInputTypes) => {
+    try {
+      const data: any = await apiService('/auth/signup', 'POST', values);
+
+      const user = data?.data?.data?.user;
+
+      sessionStorage.setItem('naya_user', JSON.stringify(user));
+      setUser(user);
+    } catch (err) {
+      console.error(err);
+    }
   };
   return (
     <div className="authPage">

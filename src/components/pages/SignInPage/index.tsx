@@ -11,13 +11,18 @@ import './styles.css';
 import { Link } from 'react-router-dom';
 import { SIGNUP } from '../../../utils/routes';
 import { useAuthContext } from '../../../context/Auth';
+import apiService from '../../../utils/apiServices';
 
 export default function SignUpPage(): ReactElement {
   const { setUser } = useAuthContext();
-  const onFormSubmit = (values: signInFormInputTypes) => {
-    console.log('signInFormInputTypes', values);
-    sessionStorage.setItem('naya_user', JSON.stringify(values));
-    setUser(values);
+
+  const onFormSubmit = async (values: signInFormInputTypes) => {
+    const data: any = await apiService('/auth/login', 'POST', values);
+
+    const user = data?.data?.data?.user;
+
+    sessionStorage.setItem('naya_user', JSON.stringify(user));
+    setUser(user);
   };
   return (
     <div className="authPage">
