@@ -9,6 +9,7 @@ const Button = ({
   className,
   type = 'button',
   loading,
+  onClick,
 }: ButtonProps): ReactElement => {
   return (
     <button
@@ -16,6 +17,7 @@ const Button = ({
       style={style}
       type={type}
       disabled={loading}
+      onClick={onClick}
     >
       {loading ? 'Loading...' : text}
     </button>

@@ -1,5 +1,7 @@
 import React, { ReactElement, useEffect, useRef } from 'react';
 import { Application, Container, Graphics } from 'pixi.js';
+import SketchTool from '../SketchTool';
+import { v4 as uuidv4 } from 'uuid';
 
 const app = new Application({
   width: 900,
@@ -84,7 +86,7 @@ export default function Canvas(): ReactElement {
     isMouseButtonDown.current = true;
 
     //assign line name
-    const identifier = Math.random() * 200000;
+    const identifier = uuidv4();
     currentLine.current = identifier;
     lineStore.current[identifier] = [];
   };
@@ -95,11 +97,14 @@ export default function Canvas(): ReactElement {
   };
 
   return (
-    <div
-      id="stage-container"
-      style={{
-        display: 'table',
-      }}
-    ></div>
+    <React.Fragment>
+      <SketchTool sketch={lineStore.current} />
+      <div
+        id="stage-container"
+        style={{
+          display: 'table',
+        }}
+      ></div>
+    </React.Fragment>
   );
 }
