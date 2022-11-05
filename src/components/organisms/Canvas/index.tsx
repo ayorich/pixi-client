@@ -93,5 +93,12 @@ export default function Canvas(): ReactElement {
     isMouseButtonDown.current = false;
   };
 
-  return <div id="stage-container" style={{ display: 'table' }}></div>;
+  return (
+    <div
+      id="stage-container"
+      style={{
+        display: 'table',
+      }}
+    ></div>
+  );
 }

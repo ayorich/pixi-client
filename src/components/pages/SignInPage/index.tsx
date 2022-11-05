@@ -10,10 +10,14 @@ import { signInFormInputTypes } from './types';
 import './styles.css';
 import { Link } from 'react-router-dom';
 import { SIGNUP } from '../../../utils/routes';
+import { useAuthContext } from '../../../context/Auth';
 
 export default function SignUpPage(): ReactElement {
+  const { setUser } = useAuthContext();
   const onFormSubmit = (values: signInFormInputTypes) => {
     console.log('signInFormInputTypes', values);
+    sessionStorage.setItem('naya_user', JSON.stringify(values));
+    setUser(values);
   };
   return (
     <div className="authPage">
