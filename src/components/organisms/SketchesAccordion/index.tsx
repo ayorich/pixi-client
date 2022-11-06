@@ -14,6 +14,7 @@ const SketchesAccordion = (): ReactElement => {
     setColloborators,
     setActiveSketch,
     activeSketch,
+    setNewSketch,
   } = useSketchContext();
 
   useEffect(() => {
@@ -36,6 +37,8 @@ const SketchesAccordion = (): ReactElement => {
 
       setActiveSketch(sketch);
       setColloborators(colloboration);
+      setNewSketch('LIST');
+      console.log('LOST');
     } catch (err) {
       console.error(err);
     }
@@ -53,7 +56,14 @@ const SketchesAccordion = (): ReactElement => {
           />
         ))}
 
-        <div className="addSketch">
+        <div
+          className="addSketch"
+          onClick={() => {
+            setActiveSketch({});
+            setColloborators([]);
+            setNewSketch('NEW');
+          }}
+        >
           <img src={plus} alt="plus" />
           <Text type="span" text="Add new sketch" />
         </div>

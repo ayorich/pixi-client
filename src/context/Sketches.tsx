@@ -6,9 +6,13 @@ type sketchTypes = {
   sketches: [];
   colloborators: [];
   activeSketch: any;
+  newSketch: string;
+  store: any;
   setSketches: React.Dispatch<any>;
   setColloborators: React.Dispatch<any>;
   setActiveSketch: React.Dispatch<any>;
+  setNewSketch: React.Dispatch<any>;
+  setStore: React.Dispatch<any>;
 };
 
 const SketchContext = createContext<sketchTypes>({
@@ -18,6 +22,10 @@ const SketchContext = createContext<sketchTypes>({
   setColloborators: () => {},
   activeSketch: null,
   setActiveSketch: () => {},
+  newSketch: 'NEW',
+  setNewSketch: () => {},
+  store: {},
+  setStore: () => {},
 });
 
 export const useSketchContext = () => useContext(SketchContext);
@@ -26,6 +34,8 @@ export default function SketchProvider({ children }: { children: ReactNode }) {
   const [sketches, setSketches] = useState<any>([]);
   const [activeSketch, setActiveSketch] = useState<any>(null);
   const [colloborators, setColloborators] = useState<any>([]);
+  const [newSketch, setNewSketch] = useState<string>('NEW');
+  const [store, setStore] = useState({});
 
   return (
     <SketchContext.Provider
@@ -36,6 +46,10 @@ export default function SketchProvider({ children }: { children: ReactNode }) {
         setColloborators,
         activeSketch,
         setActiveSketch,
+        newSketch,
+        setNewSketch,
+        store,
+        setStore,
       }}
     >
       {children}

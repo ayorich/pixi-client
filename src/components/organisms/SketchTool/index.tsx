@@ -1,5 +1,6 @@
-import React, { ReactElement, useState } from 'react';
+import React, { ReactElement, useEffect, useState } from 'react';
 import { useAuthContext } from '../../../context/Auth';
+import { useSketchContext } from '../../../context/Sketches';
 import apiService from '../../../utils/apiServices';
 
 import Button from '../../atoms/Button';
@@ -8,7 +9,7 @@ import './styles.css';
 
 const SketchTool = ({ sketch }: { sketch: any }): ReactElement => {
   const { user } = useAuthContext();
-
+  const { store } = useSketchContext();
   const [sketchName, setSketchName] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
@@ -19,6 +20,7 @@ const SketchTool = ({ sketch }: { sketch: any }): ReactElement => {
 
     setError(false);
   };
+  console.log('sketch', store);
 
   const saveSketch = async () => {
     setError(false);
@@ -26,8 +28,8 @@ const SketchTool = ({ sketch }: { sketch: any }): ReactElement => {
       return setError(true);
     }
     setLoading(true);
-    Object.keys(sketch).forEach((key) => {
-      if (sketch[key].sketch.length === 0) {
+    Object.keys(store).forEach((key) => {
+      if (store[key].sketch.length === 0) {
         delete sketch[key];
       }
     });
@@ -35,7 +37,7 @@ const SketchTool = ({ sketch }: { sketch: any }): ReactElement => {
     try {
       const data: any = await apiService('/sketches', 'POST', {
         name: sketchName,
-        sketch,
+        sketch: store,
         user: [user._id],
       });
       setLoading(false);

@@ -14,7 +14,7 @@ let app = new Application({
 export default function Canvas(): ReactElement {
   const { user } = useAuthContext();
 
-  const { activeSketch } = useSketchContext();
+  const { activeSketch, newSketch, setStore } = useSketchContext();
   let sprite = new Graphics();
   let annoRef = new Container();
 
@@ -34,11 +34,11 @@ export default function Canvas(): ReactElement {
       currentLine.current = null;
 
       sprite = new Graphics();
-      sprite.lineStyle(2, 0xff0000, 1);
+      // sprite.lineStyle(2, 0xff0000, 1);
       annoRef.addChild(sprite);
 
       //save sketch to store
-      lineStore.current = activeSketch?.sketch;
+      lineStore.current = activeSketch?.sketch || {};
 
       Object.keys(lineStore.current).forEach((key: string) => {
         sprite.lineStyle(2, lineStore.current[key].color, 1);
@@ -47,6 +47,7 @@ export default function Canvas(): ReactElement {
           lineStore.current[key].sketch[0].x,
           lineStore.current[key].sketch[0].y
         );
+
         lineStore.current[key].sketch.forEach(({ x, y }: any, i: number) => {
           if (i !== 0) {
             sprite.lineTo(x, y);
@@ -55,6 +56,13 @@ export default function Canvas(): ReactElement {
       });
     }
   }, [activeSketch]);
+
+  useEffect(() => {
+    if (newSketch === 'NEW') {
+      lineStore.current = {};
+      currentLine.current = null;
+    }
+  }, [newSketch]);
 
   const getMousePos = (event: any) => {
     const pos = { x: 0, y: 0 };
@@ -104,7 +112,6 @@ export default function Canvas(): ReactElement {
     const mousePosRef = getMousePos(e);
 
     const { x, y } = mousePosRef;
-
     Object.keys(lineStore.current).forEach((key: string) => {
       sprite.clear();
       sprite.lineStyle(2, lineStore.current[key].color, 1);
@@ -135,6 +142,11 @@ export default function Canvas(): ReactElement {
     //assign line name
     const identifier = uuidv4();
     currentLine.current = identifier;
+
+    // if (newSketch === 'NEW') {
+    //   lineStore.current = {};
+    // }
+
     lineStore.current[identifier] = {
       color: user.color.replace('#', '0x'),
       sketch: [],
@@ -144,6 +156,8 @@ export default function Canvas(): ReactElement {
   const onMouseUp = (e: any) => {
     isMouseButtonDown.current = false;
     // console.log('sketch', lineStore.current);
+    console.log('onMouseUp', lineStore.current);
+    setStore(lineStore.current);
   };
 
   return (
