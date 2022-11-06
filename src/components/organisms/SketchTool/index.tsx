@@ -9,7 +9,7 @@ import './styles.css';
 
 const SketchTool = (): ReactElement => {
   const { user } = useAuthContext();
-  const { store } = useSketchContext();
+  const { lineStore } = useSketchContext();
   const [sketchName, setSketchName] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
@@ -27,16 +27,16 @@ const SketchTool = (): ReactElement => {
       return setError(true);
     }
     setLoading(true);
-    Object.keys(store).forEach((key) => {
-      if (store[key].sketch.length === 0) {
-        delete store[key];
+    Object.keys(lineStore.current).forEach((key) => {
+      if (lineStore.current[key].sketch.length === 0) {
+        delete lineStore.current[key];
       }
     });
 
     try {
       const data: any = await apiService('/sketches', 'POST', {
         name: sketchName,
-        sketch: store,
+        sketch: lineStore.current,
         user: [user._id],
       });
       setLoading(false);

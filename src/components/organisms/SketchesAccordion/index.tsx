@@ -15,6 +15,7 @@ const SketchesAccordion = (): ReactElement => {
     setColloborators,
     setActiveSketch,
     activeSketch,
+    lineStore,
   } = useSketchContext();
   const { user } = useAuthContext();
 
@@ -58,6 +59,7 @@ const SketchesAccordion = (): ReactElement => {
         <div
           className="addSketch"
           onClick={() => {
+            lineStore.current = {};
             setActiveSketch(null);
             setColloborators([user]);
           }}

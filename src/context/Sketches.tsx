@@ -1,4 +1,4 @@
-import { useState, ReactNode } from 'react';
+import { useState, ReactNode, useRef } from 'react';
 
 import { createContext, useContext } from 'react';
 
@@ -6,11 +6,11 @@ type sketchTypes = {
   sketches: [];
   colloborators: [];
   activeSketch: any;
-  store: any;
   setSketches: React.Dispatch<any>;
   setColloborators: React.Dispatch<any>;
   setActiveSketch: React.Dispatch<any>;
-  setStore: React.Dispatch<any>;
+  lineStore: any;
+  currentLine: any;
 };
 
 const SketchContext = createContext<sketchTypes>({
@@ -20,8 +20,8 @@ const SketchContext = createContext<sketchTypes>({
   setColloborators: () => {},
   activeSketch: null,
   setActiveSketch: () => {},
-  store: {},
-  setStore: () => {},
+  lineStore: {},
+  currentLine: null,
 });
 
 export const useSketchContext = () => useContext(SketchContext);
@@ -30,7 +30,9 @@ export default function SketchProvider({ children }: { children: ReactNode }) {
   const [sketches, setSketches] = useState<any>([]);
   const [activeSketch, setActiveSketch] = useState<any>(null);
   const [colloborators, setColloborators] = useState<any>([]);
-  const [store, setStore] = useState({});
+
+  const lineStore = useRef<any>({});
+  const currentLine = useRef<any>(null);
 
   return (
     <SketchContext.Provider
@@ -41,8 +43,9 @@ export default function SketchProvider({ children }: { children: ReactNode }) {
         setColloborators,
         activeSketch,
         setActiveSketch,
-        store,
-        setStore,
+
+        lineStore,
+        currentLine,
       }}
     >
       {children}

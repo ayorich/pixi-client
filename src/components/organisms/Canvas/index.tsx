@@ -15,7 +15,7 @@ let app = new Application({
 export default function Canvas(): ReactElement {
   const { user } = useAuthContext();
 
-  const { activeSketch, setStore } = useSketchContext();
+  const { activeSketch, lineStore, currentLine } = useSketchContext();
   let sprite = new Graphics();
   let annoRef = new Container();
 
@@ -26,8 +26,6 @@ export default function Canvas(): ReactElement {
     x: 0,
     y: 0,
   });
-  const lineStore = useRef<any>({});
-  const currentLine = useRef<any>(null);
 
   useEffect(() => {
     if (activeSketch) {
@@ -94,6 +92,12 @@ export default function Canvas(): ReactElement {
     container.addEventListener('mousedown', onMouseDown);
 
     container.addEventListener('mouseup', onMouseUp);
+
+    return () => {
+      container?.removeEventListener('mousemove', onMouseMove);
+      container?.removeEventListener('mousedown', onMouseDown);
+      container?.removeEventListener('mouseup', onMouseUp);
+    };
   }, [activeSketch]);
 
   const onMouseMove = (e: any) => {
@@ -145,7 +149,6 @@ export default function Canvas(): ReactElement {
 
   const onMouseUp = async (e: any) => {
     isMouseButtonDown.current = false;
-    setStore(lineStore.current);
 
     Object.keys(lineStore.current).forEach((key) => {
       if (lineStore.current[key].sketch.length === 0) {
@@ -165,7 +168,7 @@ export default function Canvas(): ReactElement {
 
   return (
     <React.Fragment>
-      <SketchTool />
+      {!activeSketch && <SketchTool />}
       <div
         id="stage-container"
         style={{
