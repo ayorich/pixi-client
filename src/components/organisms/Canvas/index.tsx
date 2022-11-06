@@ -1,10 +1,4 @@
-import React, {
-  ReactElement,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from 'react';
+import React, { ReactElement, useEffect, useRef } from 'react';
 import { Application, Container, Graphics } from 'pixi.js';
 import SketchTool from '../SketchTool';
 import { v4 as uuidv4 } from 'uuid';
@@ -33,28 +27,26 @@ export default function Canvas(): ReactElement {
 
   useEffect(() => {
     if (activeSketch) {
-      initPointer.current = { x: 200, y: 200 };
+      lineStore.current = {};
+      currentLine.current = null;
 
       sprite = new Graphics();
       sprite.lineStyle(2, 0xff0000, 1);
       annoRef.addChild(sprite);
 
+      //save sketch to store
       lineStore.current = activeSketch?.sketch;
+
       Object.keys(lineStore.current).forEach((key: string) => {
-        sprite.clear();
         sprite.lineStyle(2, 0xffd900, 1);
-        sprite.moveTo(initPointer.current.x, initPointer.current.y);
-        lineStore.current[key].forEach(({ x, y }: any) => {
-          sprite.lineTo(x, y);
+
+        sprite.moveTo(lineStore.current[key][0].x, lineStore.current[key][0].y);
+        lineStore.current[key].forEach(({ x, y }: any, i: number) => {
+          if (i !== 0) {
+            sprite.lineTo(x, y);
+          }
         });
       });
-
-      console.log(
-        // 'useLayoutEffect==>activeSketch',
-        // activeSketch.sketch,
-        'lineStore',
-        lineStore.current
-      );
     }
   }, [activeSketch]);
 
@@ -128,9 +120,6 @@ export default function Canvas(): ReactElement {
     initPointer.current = mousePosRef;
 
     sprite = new Graphics();
-    // sprite.lineStyle(2, 0xff0000, 1);
-    sprite.moveTo(initPointer.current.x, initPointer.current.y);
-    sprite.lineTo(mousePosRef.x, mousePosRef.y);
 
     annoRef.addChild(sprite);
 

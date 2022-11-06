@@ -12,6 +12,7 @@ const SketchTool = ({ sketch }: { sketch: any }): ReactElement => {
   const [sketchName, setSketchName] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
+
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
     setSketchName(value);
@@ -25,6 +26,11 @@ const SketchTool = ({ sketch }: { sketch: any }): ReactElement => {
       return setError(true);
     }
     setLoading(true);
+    Object.keys(sketch).forEach((key) => {
+      if (sketch[key].length === 0) {
+        delete sketch[key];
+      }
+    });
 
     try {
       const data: any = await apiService('/sketches', 'POST', {
