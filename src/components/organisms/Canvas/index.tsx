@@ -28,7 +28,7 @@ export default function Canvas(): ReactElement {
 
   useEffect(() => {
     if (activeSketch) {
-      console.log('activeSketch', activeSketch);
+      console.log('activeSketch', activeSketch.sketch);
       // sprite = new Graphics();
       // Object.keys(activeSketch).forEach((key: string) => {
       //   sprite.clear();
@@ -41,7 +41,7 @@ export default function Canvas(): ReactElement {
 
       // annoRef.addChild(sprite);
 
-      lineStore.current = activeSketch;
+      lineStore.current = activeSketch.sketch;
     }
   }, [activeSketch]);
 

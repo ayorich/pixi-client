@@ -28,8 +28,8 @@ export default function SignUpPage(): ReactElement {
       const user = data?.data?.data?.user;
 
       sessionStorage.setItem('naya_user', JSON.stringify(user));
-      setUser(user);
       setLoading(false);
+      setUser(user);
     } catch (err) {
       setLoading(false);
       setErrors({
