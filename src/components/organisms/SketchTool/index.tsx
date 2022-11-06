@@ -27,7 +27,7 @@ const SketchTool = ({ sketch }: { sketch: any }): ReactElement => {
     }
     setLoading(true);
     Object.keys(sketch).forEach((key) => {
-      if (sketch[key].length === 0) {
+      if (sketch[key].sketch.length === 0) {
         delete sketch[key];
       }
     });

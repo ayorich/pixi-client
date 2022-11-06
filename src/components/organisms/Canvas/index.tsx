@@ -3,6 +3,7 @@ import { Application, Container, Graphics } from 'pixi.js';
 import SketchTool from '../SketchTool';
 import { v4 as uuidv4 } from 'uuid';
 import { useSketchContext } from '../../../context/Sketches';
+import { useAuthContext } from '../../../context/Auth';
 
 let app = new Application({
   width: 900,
@@ -11,6 +12,8 @@ let app = new Application({
 });
 
 export default function Canvas(): ReactElement {
+  const { user } = useAuthContext();
+
   const { activeSketch } = useSketchContext();
   let sprite = new Graphics();
   let annoRef = new Container();
@@ -38,10 +41,13 @@ export default function Canvas(): ReactElement {
       lineStore.current = activeSketch?.sketch;
 
       Object.keys(lineStore.current).forEach((key: string) => {
-        sprite.lineStyle(2, 0xffd900, 1);
+        sprite.lineStyle(2, lineStore.current[key].color, 1);
 
-        sprite.moveTo(lineStore.current[key][0].x, lineStore.current[key][0].y);
-        lineStore.current[key].forEach(({ x, y }: any, i: number) => {
+        sprite.moveTo(
+          lineStore.current[key].sketch[0].x,
+          lineStore.current[key].sketch[0].y
+        );
+        lineStore.current[key].sketch.forEach(({ x, y }: any, i: number) => {
           if (i !== 0) {
             sprite.lineTo(x, y);
           }
@@ -101,16 +107,17 @@ export default function Canvas(): ReactElement {
 
     Object.keys(lineStore.current).forEach((key: string) => {
       sprite.clear();
-      sprite.lineStyle(2, 0xffd900, 1);
+      sprite.lineStyle(2, lineStore.current[key].color, 1);
+
       sprite.moveTo(initPointer.current.x, initPointer.current.y);
-      lineStore.current[key].forEach(({ x, y }: any) => {
+      lineStore.current[key].sketch.forEach(({ x, y }: any) => {
         sprite.lineTo(x, y);
       });
     });
 
     //add new points
-    lineStore.current[currentLine.current] = [
-      ...lineStore.current[currentLine.current],
+    lineStore.current[currentLine.current].sketch = [
+      ...lineStore.current[currentLine.current].sketch,
       { x, y },
     ];
   };
@@ -128,7 +135,10 @@ export default function Canvas(): ReactElement {
     //assign line name
     const identifier = uuidv4();
     currentLine.current = identifier;
-    lineStore.current[identifier] = [];
+    lineStore.current[identifier] = {
+      color: user.color.replace('#', '0x'),
+      sketch: [],
+    };
   };
 
   const onMouseUp = (e: any) => {
