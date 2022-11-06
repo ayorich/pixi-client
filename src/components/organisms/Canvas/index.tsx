@@ -1,10 +1,16 @@
-import React, { ReactElement, useEffect, useRef } from 'react';
+import React, {
+  ReactElement,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react';
 import { Application, Container, Graphics } from 'pixi.js';
 import SketchTool from '../SketchTool';
 import { v4 as uuidv4 } from 'uuid';
 import { useSketchContext } from '../../../context/Sketches';
 
-const app = new Application({
+let app = new Application({
   width: 900,
   height: 450,
   backgroundColor: 0xffffff,
@@ -12,7 +18,6 @@ const app = new Application({
 
 export default function Canvas(): ReactElement {
   const { activeSketch } = useSketchContext();
-
   let sprite = new Graphics();
   let annoRef = new Container();
 
@@ -28,20 +33,28 @@ export default function Canvas(): ReactElement {
 
   useEffect(() => {
     if (activeSketch) {
-      console.log('activeSketch', activeSketch.sketch);
-      // sprite = new Graphics();
-      // Object.keys(activeSketch).forEach((key: string) => {
-      //   sprite.clear();
-      //   sprite.lineStyle(2, 0xffd900, 1);
-      //   sprite.moveTo(100, 100);
-      //   activeSketch[key].forEach(({ x, y }: any) => {
-      //     sprite.lineTo(x, y);
-      //   });
-      // });
+      initPointer.current = { x: 200, y: 200 };
 
-      // annoRef.addChild(sprite);
+      sprite = new Graphics();
+      sprite.lineStyle(2, 0xff0000, 1);
+      annoRef.addChild(sprite);
 
-      lineStore.current = activeSketch.sketch;
+      lineStore.current = activeSketch?.sketch;
+      Object.keys(lineStore.current).forEach((key: string) => {
+        sprite.clear();
+        sprite.lineStyle(2, 0xffd900, 1);
+        sprite.moveTo(initPointer.current.x, initPointer.current.y);
+        lineStore.current[key].forEach(({ x, y }: any) => {
+          sprite.lineTo(x, y);
+        });
+      });
+
+      console.log(
+        // 'useLayoutEffect==>activeSketch',
+        // activeSketch.sketch,
+        'lineStore',
+        lineStore.current
+      );
     }
   }, [activeSketch]);
 
@@ -57,16 +70,31 @@ export default function Canvas(): ReactElement {
   };
 
   useEffect(() => {
-    app.stage.addChild(annoRef);
-    container = document.getElementById('stage-container') as HTMLElement;
-    container.appendChild(app.view);
+    //remove all existing children if any
+    app.stage.removeChildren();
 
+    //add container to stage
+    app.stage.addChild(annoRef);
+
+    //get container
+    container = document.getElementById('stage-container') as HTMLElement;
+    const child = document.getElementById('stage-container')
+      ?.firstChild as HTMLElement;
+
+    if (child) {
+      container.replaceChild(app.view, child);
+    } else {
+      //append app view to container
+      container.appendChild(app.view);
+    }
+
+    //add event listeners
     container.addEventListener('mousemove', onMouseMove);
 
     container.addEventListener('mousedown', onMouseDown);
 
     container.addEventListener('mouseup', onMouseUp);
-  }, []);
+  }, [activeSketch]);
 
   const onMouseMove = (e: any) => {
     if (!isMouseButtonDown.current) {
@@ -80,7 +108,6 @@ export default function Canvas(): ReactElement {
     const { x, y } = mousePosRef;
 
     Object.keys(lineStore.current).forEach((key: string) => {
-      // console.log('key', key);
       sprite.clear();
       sprite.lineStyle(2, 0xffd900, 1);
       sprite.moveTo(initPointer.current.x, initPointer.current.y);
@@ -97,13 +124,11 @@ export default function Canvas(): ReactElement {
   };
 
   const onMouseDown = (e: any) => {
-    console.log('activeSketch', lineStore.current);
-
     const mousePosRef = getMousePos(e);
     initPointer.current = mousePosRef;
 
     sprite = new Graphics();
-    sprite.lineStyle(2, 0xff0000, 1);
+    // sprite.lineStyle(2, 0xff0000, 1);
     sprite.moveTo(initPointer.current.x, initPointer.current.y);
     sprite.lineTo(mousePosRef.x, mousePosRef.y);
 
