@@ -4,6 +4,7 @@ import SketchTool from '../SketchTool';
 import { v4 as uuidv4 } from 'uuid';
 import { useSketchContext } from '../../../context/Sketches';
 import { useAuthContext } from '../../../context/Auth';
+import apiService from '../../../utils/apiServices';
 
 let app = new Application({
   width: 900,
@@ -14,7 +15,7 @@ let app = new Application({
 export default function Canvas(): ReactElement {
   const { user } = useAuthContext();
 
-  const { activeSketch, newSketch, setStore } = useSketchContext();
+  const { activeSketch, setStore } = useSketchContext();
   let sprite = new Graphics();
   let annoRef = new Container();
 
@@ -56,13 +57,6 @@ export default function Canvas(): ReactElement {
       });
     }
   }, [activeSketch]);
-
-  useEffect(() => {
-    if (newSketch === 'NEW') {
-      lineStore.current = {};
-      currentLine.current = null;
-    }
-  }, [newSketch]);
 
   const getMousePos = (event: any) => {
     const pos = { x: 0, y: 0 };
@@ -143,26 +137,35 @@ export default function Canvas(): ReactElement {
     const identifier = uuidv4();
     currentLine.current = identifier;
 
-    // if (newSketch === 'NEW') {
-    //   lineStore.current = {};
-    // }
-
     lineStore.current[identifier] = {
       color: user.color.replace('#', '0x'),
       sketch: [],
     };
   };
 
-  const onMouseUp = (e: any) => {
+  const onMouseUp = async (e: any) => {
     isMouseButtonDown.current = false;
-    // console.log('sketch', lineStore.current);
-    console.log('onMouseUp', lineStore.current);
     setStore(lineStore.current);
+
+    Object.keys(lineStore.current).forEach((key) => {
+      if (lineStore.current[key].sketch.length === 0) {
+        delete lineStore.current[key];
+      }
+    });
+
+    if (activeSketch) {
+      console.log('active', activeSketch);
+      //autosave for users
+      await apiService(`/sketches/${activeSketch._id}`, 'PATCH', {
+        sketch: lineStore.current,
+        user: [...activeSketch.user, user._id],
+      });
+    }
   };
 
   return (
     <React.Fragment>
-      <SketchTool sketch={lineStore.current} />
+      <SketchTool />
       <div
         id="stage-container"
         style={{

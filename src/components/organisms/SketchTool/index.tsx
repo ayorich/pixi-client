@@ -7,7 +7,7 @@ import Button from '../../atoms/Button';
 import Input from '../../atoms/Input';
 import './styles.css';
 
-const SketchTool = ({ sketch }: { sketch: any }): ReactElement => {
+const SketchTool = (): ReactElement => {
   const { user } = useAuthContext();
   const { store } = useSketchContext();
   const [sketchName, setSketchName] = useState('');
@@ -20,7 +20,6 @@ const SketchTool = ({ sketch }: { sketch: any }): ReactElement => {
 
     setError(false);
   };
-  console.log('sketch', store);
 
   const saveSketch = async () => {
     setError(false);
@@ -30,7 +29,7 @@ const SketchTool = ({ sketch }: { sketch: any }): ReactElement => {
     setLoading(true);
     Object.keys(store).forEach((key) => {
       if (store[key].sketch.length === 0) {
-        delete sketch[key];
+        delete store[key];
       }
     });
 

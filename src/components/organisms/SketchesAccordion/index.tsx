@@ -6,6 +6,7 @@ import plus from '../../../assets/plus.svg';
 import './styles.css';
 import apiService from '../../../utils/apiServices';
 import { useSketchContext } from '../../../context/Sketches';
+import { useAuthContext } from '../../../context/Auth';
 
 const SketchesAccordion = (): ReactElement => {
   const {
@@ -14,8 +15,8 @@ const SketchesAccordion = (): ReactElement => {
     setColloborators,
     setActiveSketch,
     activeSketch,
-    setNewSketch,
   } = useSketchContext();
+  const { user } = useAuthContext();
 
   useEffect(() => {
     (async () => {
@@ -37,8 +38,6 @@ const SketchesAccordion = (): ReactElement => {
 
       setActiveSketch(sketch);
       setColloborators(colloboration);
-      setNewSketch('LIST');
-      console.log('LOST');
     } catch (err) {
       console.error(err);
     }
@@ -59,9 +58,8 @@ const SketchesAccordion = (): ReactElement => {
         <div
           className="addSketch"
           onClick={() => {
-            setActiveSketch({});
-            setColloborators([]);
-            setNewSketch('NEW');
+            setActiveSketch(null);
+            setColloborators([user]);
           }}
         >
           <img src={plus} alt="plus" />
