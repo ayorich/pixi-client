@@ -28,7 +28,19 @@ export default function Canvas(): ReactElement {
 
   useEffect(() => {
     if (activeSketch) {
-      console.log(activeSketch);
+      console.log('activeSketch', activeSketch);
+      // sprite = new Graphics();
+      // Object.keys(activeSketch).forEach((key: string) => {
+      //   sprite.clear();
+      //   sprite.lineStyle(2, 0xffd900, 1);
+      //   sprite.moveTo(100, 100);
+      //   activeSketch[key].forEach(({ x, y }: any) => {
+      //     sprite.lineTo(x, y);
+      //   });
+      // });
+
+      // annoRef.addChild(sprite);
+
       lineStore.current = activeSketch;
     }
   }, [activeSketch]);
@@ -68,6 +80,7 @@ export default function Canvas(): ReactElement {
     const { x, y } = mousePosRef;
 
     Object.keys(lineStore.current).forEach((key: string) => {
+      // console.log('key', key);
       sprite.clear();
       sprite.lineStyle(2, 0xffd900, 1);
       sprite.moveTo(initPointer.current.x, initPointer.current.y);
@@ -76,6 +89,7 @@ export default function Canvas(): ReactElement {
       });
     });
 
+    //add new points
     lineStore.current[currentLine.current] = [
       ...lineStore.current[currentLine.current],
       { x, y },
@@ -83,6 +97,8 @@ export default function Canvas(): ReactElement {
   };
 
   const onMouseDown = (e: any) => {
+    console.log('activeSketch', lineStore.current);
+
     const mousePosRef = getMousePos(e);
     initPointer.current = mousePosRef;
 
@@ -103,7 +119,7 @@ export default function Canvas(): ReactElement {
 
   const onMouseUp = (e: any) => {
     isMouseButtonDown.current = false;
-    console.log('sketch', lineStore.current);
+    // console.log('sketch', lineStore.current);
   };
 
   return (

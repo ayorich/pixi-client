@@ -11,6 +11,7 @@
   font-size: 12px;
   line-height: 16px;
   color: #161616;
+  cursor: pointer;
 }
 
 .addSketch {
@@ -20,6 +21,7 @@
   margin-right: 10px;
 }
 
-.sketched {
-  cursor: pointer;
+.sketchesList p.sketched {
+  color: #4f00c1;
+  font-weight: 700;
 }

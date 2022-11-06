@@ -8,8 +8,13 @@ import apiService from '../../../utils/apiServices';
 import { useSketchContext } from '../../../context/Sketches';
 
 const SketchesAccordion = (): ReactElement => {
-  const { setSketches, sketches, setColloborators, setActiveSketch } =
-    useSketchContext();
+  const {
+    setSketches,
+    sketches,
+    setColloborators,
+    setActiveSketch,
+    activeSketch,
+  } = useSketchContext();
 
   useEffect(() => {
     (async () => {
@@ -26,8 +31,8 @@ const SketchesAccordion = (): ReactElement => {
   const getColloborators = async (sketchId: string) => {
     try {
       const data: any = await apiService(`/sketches/${sketchId}`, 'GET');
-      const colloboration = data?.data?.data?.data?.user;
-      const sketch = data?.data?.data?.data?.sketch;
+      const sketch = data?.data?.data?.data;
+      const colloboration = sketch?.user;
 
       setActiveSketch(sketch);
       setColloborators(colloboration);
@@ -43,7 +48,7 @@ const SketchesAccordion = (): ReactElement => {
             key={i}
             type="p"
             text={name}
-            className="sketched"
+            className={`${activeSketch?._id === _id ? 'sketched' : ''}`}
             onClick={() => getColloborators(_id)}
           />
         ))}

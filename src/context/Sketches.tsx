@@ -5,7 +5,7 @@ import { createContext, useContext } from 'react';
 type sketchTypes = {
   sketches: [];
   colloborators: [];
-  activeSketch: null;
+  activeSketch: any;
   setSketches: React.Dispatch<any>;
   setColloborators: React.Dispatch<any>;
   setActiveSketch: React.Dispatch<any>;

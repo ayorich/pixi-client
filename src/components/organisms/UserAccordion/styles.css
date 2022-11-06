@@ -22,3 +22,6 @@
   border-radius: 50%;
   margin-right: 7px;
 }
+.userList p.userItemName {
+  font-weight: 700;
+}
