@@ -33,7 +33,6 @@ export default function Canvas(): ReactElement {
       currentLine.current = null;
 
       sprite = new Graphics();
-      // sprite.lineStyle(2, 0xff0000, 1);
       annoRef.addChild(sprite);
 
       //save sketch to store
@@ -157,7 +156,6 @@ export default function Canvas(): ReactElement {
     });
 
     if (activeSketch) {
-      console.log('active', activeSketch);
       //autosave for users
       await apiService(`/sketches/${activeSketch._id}`, 'PATCH', {
         sketch: lineStore.current,

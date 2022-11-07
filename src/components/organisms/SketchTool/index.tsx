@@ -1,4 +1,4 @@
-import React, { ReactElement, useEffect, useState } from 'react';
+import React, { ReactElement, useState } from 'react';
 import { useAuthContext } from '../../../context/Auth';
 import { useSketchContext } from '../../../context/Sketches';
 import apiService from '../../../utils/apiServices';
@@ -9,7 +9,7 @@ import './styles.css';
 
 const SketchTool = (): ReactElement => {
   const { user } = useAuthContext();
-  const { lineStore } = useSketchContext();
+  const { lineStore, setSketches } = useSketchContext();
   const [sketchName, setSketchName] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
@@ -34,11 +34,14 @@ const SketchTool = (): ReactElement => {
     });
 
     try {
-      const data: any = await apiService('/sketches', 'POST', {
+      await apiService('/sketches', 'POST', {
         name: sketchName,
         sketch: lineStore.current,
         user: [user._id],
       });
+      const data: any = await apiService('/sketches', 'GET');
+      const sketched = data?.data?.data?.data || [];
+      setSketches(sketched);
       setLoading(false);
       setSketchName('');
     } catch (err) {
