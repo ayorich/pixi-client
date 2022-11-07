@@ -5,3 +5,8 @@
 - React
 - Typescript
 - pixi.js
+
+### Project setup
+
+- yarn
+- yarn start
